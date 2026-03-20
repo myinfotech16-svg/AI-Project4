@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Workforce Analysis Dashboard</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f6f9;
+    margin: 0;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.form-section, .filter-section {
+    margin: 15px 0;
+    text-align: center;
+}
+
+input {
+    padding: 8px;
+    margin: 5px;
+}
+
+button {
+    padding: 8px 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th {
+    background: #007bff;
+    color: white;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+.report {
+    margin-top: 20px;
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+    <h1>Workforce Analysis Dashboard</h1>
+
+    <!-- Form -->
+    <div class="form-section">
+        <input type="text" id="name" placeholder="Employee Name">
+        <input type="text" id="department" placeholder="Department">
+        <input type="number" id="salary" placeholder="Salary">
+        <button onclick="addEmployee()">Add Employee</button>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-section">
+        <input type="text" id="filterDept" placeholder="Filter by Department">
+        <button onclick="filterData()">Filter</button>
+        <button onclick="resetData()">Reset</button>
+    </div>
+
+    <!-- Table -->
+    <table id="employeeTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Salary</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- Report -->
+    <div class="report">
+        <h2>Report</h2>
+        <p>Total Employees: <span id="totalEmp">0</span></p>
+        <p>Average Salary: ₹<span id="avgSalary">0</span></p>
+    </div>
+</div>
+
+<script>
+let employees = [];
+
+function addEmployee() {
+    let name = document.getElementById("name").value;
+    let dept = document.getElementById("department").value;
+    let salary = parseFloat(document.getElementById("salary").value);
+
+    if (name && dept && salary) {
+        employees.push({ name, dept, salary });
+        displayData(employees);
+        clearFields();
+    } else {
+        alert("Please fill all fields");
+    }
+}
+
+function displayData(data) {
+    let tableBody = document.querySelector("#employeeTable tbody");
+    tableBody.innerHTML = "";
+
+    data.forEach(emp => {
+        let row = `<tr>
+            <td>${emp.name}</td>
+            <td>${emp.dept}</td>
+            <td>₹${emp.salary}</td>
+        </tr>`;
+        tableBody.innerHTML += row;
+    });
+
+    generateReport(data);
+}
+
+function generateReport(data) {
+    let total = data.length;
+    let avg = 0;
+
+    if (total > 0) {
+        let sum = data.reduce((acc, emp) => acc + emp.salary, 0);
+        avg = (sum / total).toFixed(2);
+    }
+
+    document.getElementById("totalEmp").innerText = total;
+    document.getElementById("avgSalary").innerText = avg;
+}
+
+function filterData() {
+    let dept = document.getElementById("filterDept").value.toLowerCase();
+
+    let filtered = employees.filter(emp =>
+        emp.dept.toLowerCase().includes(dept)
+    );
+
+    displayData(filtered);
+}
+
+function resetData() {
+    displayData(employees);
+}
+
+function clearFields() {
+    document.getElementById("name").value = "";
+    document.getElementById("department").value = "";
+    document.getElementById("salary").value = "";
+}
+</script>
+
+</body>
+</html>
